@@ -66,6 +66,7 @@ class BaseController extends Controller
             $data = $builder->orderBy('id', 'desc')->offset($offset)->limit($limit)->get()->toArray();
             if($type  == 'box'){
                 foreach ($data as &$row){
+                    $row['is_active'] = (bool)$row['is_active'];
                     $row['warehouse_name'] = $row['warehouse']['name'];
                 }
             }
@@ -127,6 +128,38 @@ class BaseController extends Controller
                         $box = Box::whereCode($params['code'])->first();
                         if($box) throw new \Exception("箱子代码【{$params['code']}】已经被使用");
                         Box::create($createOrUpdateData);
+                    }
+                    break;
+                case "client":
+                    $createOrUpdateData = [
+                        "code" => $params["code"],
+                        "company_name" => $params["company_name"],
+                        "shipper_name" => $params["shipper_name"],
+                        "shipper_company" => $params["shipper_company"],
+                        "shipper_phone" => $params["shipper_phone"],
+                        "shipper_address" => $params["shipper_address"],
+                        "shipper_country" => $params["shipper_country"],
+                        "shipper_province" => $params["shipper_province"],
+                        "shipper_city" => $params["shipper_city"],
+                        "shipper_postal_code" => $params["shipper_postal_code"],
+                        "shipper_email" => $params["shipper_email"],
+                        "shipper_tax_number_type" => $params["shipper_tax_number_type"],
+                        "shipper_tax_number" => $params["shipper_tax_number"],
+                        "shipper_id_card_number_type" => $params["shipper_id_card_number_type"],
+                        "shipper_id_card_number" => $params["shipper_id_card_number"],
+                        "ioss_number" => $params["ioss_number"],
+                        "ioss_issuer_country_code" => $params["ioss_issuer_country_code"]
+                    ];
+                    if(!empty($params['id'])){
+                        $client = Client::whereId($params['id'])->first();
+                        if (empty($client)) throw new \Exception("找不到客户信息");
+                        $exists = Client::whereCode($params['code'])->where('id','<>',$params['id'])->exists();
+                        if($exists) throw new \Exception("客户代码【{$params['code']}】已经被使用");
+                        $client->update($createOrUpdateData);
+                    }else{
+                        $client = Client::whereCode($params['code'])->first();
+                        if($client) throw new \Exception("客户代码【{$params['barcode']}】已经被使用");
+                        Client::create($createOrUpdateData);
                     }
                     break;
                 default:

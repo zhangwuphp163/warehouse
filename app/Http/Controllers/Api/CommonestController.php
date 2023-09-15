@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Libraries\ApiResponse;
+use App\Models\Client;
 use App\Models\Material;
 use App\Models\Sku;
 use App\Models\Supplier;
@@ -37,12 +38,12 @@ class CommonestController extends Controller
                         ];
                     }
                     break;
-                case 'supplier':
-                    $rows = Supplier::query()->get(['id','name']);
+                case 'client':
+                    $rows = Client::query()->get(['id','company_name','code']);
                     foreach ($rows as $row){
                         $data[] = [
                             'value' => $row->id,
-                            'label' => $row->name,
+                            'label' => $row->company_name."({$row->code})",
                         ];
                     }
                     break;
