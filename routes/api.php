@@ -18,11 +18,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('/login',[\App\Http\Controllers\Api\LoginController::class,'post'])->middleware(['api-log']);
-/*Route::middleware('api-log')->post('/login', function (Request $request) {
-    return ['code' => 200,'msg' => 'success','data' => ['userId'=> '1', 'token'=> 'debug',]];
-});*/
 Route::middleware(['api-log','auth.api'])->group(function(){
     Route::get('/menu',[\App\Http\Controllers\Api\BaseController::class,'menu']);
+    Route::post('/setting',[\App\Http\Controllers\Api\BaseController::class,'setting']);
+    Route::post('/setting/{type}/create-or-update',[\App\Http\Controllers\Api\BaseController::class,'createOrUpdate']);
+    Route::post('/commonest/get-table-headers/{type}',[\App\Http\Controllers\Api\CommonestController::class,'getTableHeaders']);
     Route::post('/commonest/get-select-list',[\App\Http\Controllers\Api\CommonestController::class,'getSelectList']);
 
     Route::post('/user',[\App\Http\Controllers\Api\UserController::class,'index']);
